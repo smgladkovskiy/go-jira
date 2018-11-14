@@ -3,14 +3,16 @@ package jira
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"reflect"
 	"strings"
 	"testing"
 
-	"github.com/trivago/tgo/tcontainer"
 	"time"
+
+	"github.com/trivago/tgo/tcontainer"
 )
 
 func TestIssueService_Get_Success(t *testing.T) {
@@ -72,6 +74,54 @@ func TestIssueService_Create(t *testing.T) {
 	}
 	issue, _, err := testClient.Issue.Create(i)
 	if issue == nil {
+		t.Error("Expected issue. Issue is nil")
+	}
+	if err != nil {
+		t.Errorf("Error given: %s", err)
+	}
+}
+
+func TestIssueService_CreateThenGet(t *testing.T) {
+	setup()
+	defer teardown()
+	testMux.HandleFunc("/rest/api/2/issue", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "POST")
+		testRequestURL(t, r, "/rest/api/2/issue")
+
+		w.WriteHeader(http.StatusCreated)
+		io.Copy(w, r.Body)
+	})
+
+	i := &Issue{
+		Fields: &IssueFields{
+			Description: "example bug report",
+			Created:     Time(time.Now()),
+		},
+	}
+	issue, _, err := testClient.Issue.Create(i)
+	if issue == nil {
+		t.Error("Expected issue. Issue is nil")
+	}
+	if err != nil {
+		t.Errorf("Error given: %s", err)
+	}
+
+	testMux.HandleFunc("/rest/api/2/issue/10002", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		testRequestURL(t, r, "/rest/api/2/issue/10002")
+
+		bytes, err := json.Marshal(issue)
+		if err != nil {
+			t.Errorf("Error marshaling issue: %s", err)
+		}
+		_, err = w.Write(bytes)
+		if err != nil {
+			t.Errorf("Error writing response: %s", err)
+		}
+	})
+
+	issue2, _, err := testClient.Issue.Get("10002", nil)
+	if issue2 == nil {
 		t.Error("Expected issue. Issue is nil")
 	}
 	if err != nil {
