@@ -96,14 +96,14 @@ func (d *TTWorklogDate) UnmarshalJSON(b []byte) (err error) {
 }
 
 // GetWorkLogs returns worklogs for a user on date range
-func (w *TempoTimesheetsWorklogService) GetWorkLogs(params *url.Values) ([]*TTWorkLog, *Response, error) {
+func (w *TempoTimesheetsWorklogService) GetWorkLogs(params *url.Values) ([]TTWorkLog, *Response, error) {
 	apiEndpoint := fmt.Sprintf("/rest/tempo-timesheets/3/worklogs?%s", params.Encode())
 	req, err := w.client.NewRequest("GET", apiEndpoint, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	var result []*TTWorkLog
+	var result []TTWorkLog
 	resp, err := w.client.Do(req, &result)
 	if err != nil {
 		err = NewJiraError(resp, err)
