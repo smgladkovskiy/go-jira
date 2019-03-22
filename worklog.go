@@ -42,26 +42,27 @@ type TTWorklogDate struct {
 // TimeSheet WorkLog represents one entry of a WorkLog
 type TTWorkLog struct {
 	Self             string         `json:"self,omitempty" structs:"self,omitempty"`
+	ID               int64          `json:"id,omitempty" structs:"id,omitempty"`
+	Issue            *TTIssue       `json:"issue,omitempty" structs:"issue,omitempty"`
 	Author           *User          `json:"author,omitempty" structs:"author,omitempty"`
-	UpdateAuthor     *User          `json:"updateAuthor,omitempty" structs:"updateAuthor,omitempty"`
+	TimeSpent        string         `json:"timeSpent,omitempty" structs:"timeSpent,omitempty"`
+	TimeSpentSeconds int            `json:"timeSpentSeconds,omitempty" structs:"timeSpentSeconds,omitempty"`
 	Comment          string         `json:"comment,omitempty" structs:"comment,omitempty"`
 	Created          *TTWorklogTime `json:"dateCreated,omitempty" structs:"dateCreated,omitempty"`
 	Updated          *TTWorklogTime `json:"dateUpdated,omitempty" structs:"dateUpdated,omitempty"`
+	UpdateAuthor     *User          `json:"updateAuthor,omitempty" structs:"updateAuthor,omitempty"`
 	Started          *TTWorklogTime `json:"dateStarted,omitempty" structs:"dateStarted,omitempty"`
-	TimeSpent        string         `json:"timeSpent,omitempty" structs:"timeSpent,omitempty"`
-	TimeSpentSeconds int            `json:"timeSpentSeconds,omitempty" structs:"timeSpentSeconds,omitempty"`
-	ID               int64          `json:"id,omitempty" structs:"id,omitempty"`
-	Issue            *TTIssue       `json:"issue,omitempty" structs:"issue,omitempty"`
 }
 
 // TimeSheet Issue object represents a JIRA issue.
 type TTIssue struct {
-	Expand    string       `json:"expand,omitempty" structs:"expand,omitempty"`
-	ID        int64        `json:"id,omitempty" structs:"id,omitempty"`
-	Self      string       `json:"self,omitempty" structs:"self,omitempty"`
-	Key       string       `json:"key,omitempty" structs:"key,omitempty"`
-	Fields    *IssueFields `json:"fields,omitempty" structs:"fields,omitempty"`
-	Changelog *Changelog   `json:"changelog,omitempty" structs:"changelog,omitempty"`
+	Self                     string     `json:"self,omitempty" structs:"self,omitempty"`
+	ID                       int64      `json:"id,omitempty" structs:"id,omitempty"`
+	ProjectID                int64      `json:"projectId,omitempty" structs:"projectId,omitempty"`
+	Key                      string     `json:"key,omitempty" structs:"key,omitempty"`
+	RemainingEstimateSeconds int64      `json:"remainingEstimateSeconds,omitempty" structs:"remainingEstimateSeconds,omitempty"`
+	IssueType                *IssueType `json:"issueType" structs:"issueType,omitempty"`
+	Summary                  string     `json:"summary,omitempty" structs:"summary,omitempty"`
 }
 
 // UnmarshalJSON will transform the TimeSheet WorkLog time into a time.Time
